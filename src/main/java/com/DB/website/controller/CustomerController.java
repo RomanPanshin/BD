@@ -10,15 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@RequestMapping("/customers") // Base path for all customer-related actions
 public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/customers")
+    @GetMapping
     public String listCustomers(Model model) {
         model.addAttribute("customers", customerService.findAllCustomers());
-        return "customers"; // Thymeleaf template name
+        return "customers";
     }
 
     @DeleteMapping("/delete/{customerId}")
@@ -28,19 +29,19 @@ public class CustomerController {
         return ResponseEntity.ok("Customer deleted successfully");
     }
 
-    @PostMapping("/customers/edit")
+    @PostMapping("/edit")
+    @ResponseBody
     public ResponseEntity<?> editCustomer(@RequestBody Customer customer) {
         customerService.updateCustomer(customer);
         return ResponseEntity.ok("Customer updated successfully");
     }
 
-    @GetMapping("/get/{customerId}")
-    public ResponseEntity<?> getCustomer(@PathVariable Integer customerId) {
-        Customer customer = customerService.findCustomerById(customerId);
-        if (customer != null) {
-            return ResponseEntity.ok(customer);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @PostMapping("/add")
+    @ResponseBody
+    public ResponseEntity<?> addCustomer(@RequestBody Customer customer) {
+        customerService.addCustomer(customer);
+        return ResponseEntity.ok("Customer added successfully");
     }
+
+    // Other methods...
 }
