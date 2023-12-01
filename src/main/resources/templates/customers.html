@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Customer List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 <div class="container mt-5">
@@ -17,21 +17,98 @@
             <th>Age</th>
             <th>Profession</th>
             <th>Sex</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="customer : ${customers}">
-            <td th:text="${customer.customer_id}"></td>
-            <td th:text="${customer.name}"></td>
-            <td th:text="${customer.age}"></td>
-            <td th:text="${customer.profession}"></td>
-            <td th:text="${customer.sex}"></td>
+            <td th:text="${customer.customerId}" class="editable" contenteditable="false"></td>
+            <td th:text="${customer.name}" class="editable" contenteditable="false"></td>
+            <td th:text="${customer.age}" class="editable" contenteditable="false"></td>
+            <td th:text="${customer.profession}" class="editable" contenteditable="false"></td>
+            <td th:text="${customer.sex}" class="editable" contenteditable="false"></td>
+            <td>
+                <button class="btn btn-danger delete-btn" th:data-id="${customer.customerId}">Delete</button>
+                <button class="btn btn-primary edit-btn" th:data-id="${customer.customerId}" onclick="toggleEdit(this)">Change</button>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.delete-btn').click(function(event) {
+            event.preventDefault();  // Prevent default button behavior
+            var customerId = $(this).data('id');
+            if (confirm('Are you sure you want to delete this?')) {
+                $.ajax({
+                    url: '/delete/' + customerId,
+                    type: 'DELETE',
+                    success: function(result) {
+                        window.location.reload();
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+            }
+        });
+    });
+
+</script>
+<script>
+    function toggleEdit(button) {
+    var row = $(button).closest('tr');
+    var isEditable = row.is('.editing');
+    row.find('.editable').prop('contenteditable', !isEditable).toggleClass('editable-editing');
+    row.toggleClass('editing');
+
+    if (isEditable) {
+        // Change button text to 'Change'
+        $(button).text('Change');
+        // Save the changes
+        saveChanges(row);
+    } else {
+        // Change button text to 'Save'
+        $(button).text('Save');
+    }
+}
+
+function saveChanges(row) {
+    var customerId = row.find('td:first').text();
+    var name = row.find('td:nth-child(2)').text();
+    var age = row.find('td:nth-child(3)').text();
+    var profession = row.find('td:nth-child(4)').text();
+    var sex = row.find('td:nth-child(5)').text();
+
+    var customerData = {
+        customerId: customerId,
+        name: name,
+        age: parseInt(age, 10),
+        profession: profession,
+        sex: sex
+    };
+
+    // AJAX request to the server-side endpoint
+    $.ajax({
+        url: '/customers/edit',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(customerData),
+        success: function(response) {
+            alert('Customer updated successfully');
+        },
+        error: function(error) {
+            console.error('Error updating customer:', error);
+            alert('Error updating customer. Please try again.');
+        }
+    });
+}
+
+</script>
 </body>
 </html>

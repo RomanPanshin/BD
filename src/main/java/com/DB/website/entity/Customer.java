@@ -8,37 +8,41 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer customer_id;
+    @Column(name = "Customer_id")
+    private Integer customerId;
 
-    @Column(name = "branch_id")
-    private Integer branch_id;
+    @Column(name = "Branch_id")
+    private Integer branchId;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "Name", nullable = false)
     private String name;
 
-    @Column(name = "age", nullable = false)
+    @Column(name = "Age", nullable = false)
     private Integer age;
 
-    @Column(name = "profession")
+    @Column(name = "Profession")
     private String profession;
 
-    @Column(name = "sex", nullable = false)
+    @Column(name = "Sex", nullable = false)
     private String sex;
 
-    public Integer getCustomer_id() {
-        return customer_id;
+    // Getters and setters
+
+
+    public Integer getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer_id(Integer customer_id) {
-        this.customer_id = customer_id;
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
-    public Integer getBranch_id() {
-        return branch_id;
+    public Integer getBranchId() {
+        return branchId;
     }
 
-    public void setBranch_id(Integer branch_id) {
-        this.branch_id = branch_id;
+    public void setBranchId(Integer branchId) {
+        this.branchId = branchId;
     }
 
     public String getName() {
